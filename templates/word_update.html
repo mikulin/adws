@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Активный Словарь РЯ</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='normalize.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='skeleton.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='quill.snow.css') }}" />
+  <script src="https://cdn.quilljs.com/1.2.5/quill.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="three columns left">
+      <hr>
+      <div class="title" id="title">
+        <h4>АКТИВНЫЙ СЛОВАРЬ<br>РУССКОГО ЯЗЫКА</h4>
+      </div>
+      <hr>
+      <div class="menu">
+        <a class="button" href="/">словник</a>
+        <a class="button" href="/new">новое слово</a>
+        <a class="button" href="/info">выйти</a>
+        <hr>
+        <a class="button button-primary" id="save" href="/">сохранить статью</a>
+      </div>
+    </div>
+      <div class="eight columns right">
+        <br>
+        <form id="info">
+        <div class="six columns">
+          Слово:<br>
+          <input type="text" id="word" placeholder="слово" value="{{ word }}" style="width: 100%;">
+        </div>
+        <div class="six columns">
+          Автор:<br>
+          <input type="text" id="author" placeholder="[И.Ф.]" value="{{ author }}" style="width: 100%;">
+        </div>
+          Статус:<br>
+          <input type="text" id="status" placeholder="например, готово к печати или требует исправлений" value="{{ status }}" style="width: 100%;">
+        </form>
+        <hr>
+        <b>ВОКАБУЛА</b>
+        <p class="example">А^КЦИЯ, СУЩ; ЖЕНСК; <i>-и</i>; <u>преим.</u> в форме МН.</p>
+        <div id="voc">
+          
+        </div>
+        <br>
+        <br>
+        <b>ЛЕКСЕМЫ</b>
+        <br>
+        <table>
+        {{ lexemes }}
+        <tr><td><a id="save" href="new_lex?word_id={{ word_id }}&word={{ word }}">добавить новую лексему</a></td><td></td></tr>
+        </table>
+        <br>
+
+        <b>ФРАЗЕОЛОГИЯ</b>
+        <p class="example">◊ <i><b>башня из слоновой кости</b></i> ‘воображаемое помещение, в котором как бы живет художник, писатель или ученый, оторванный от реального мира или творящий не ради людей, а ради самих искусства или науки’: <i>Ученый живет не в башне из слоновой кости, а в социальной среде</i> («Химия и жизнь», 1968).</p>
+        <div id="phr">
+          
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var toolbarOptions = ['bold', 'italic', 'underline'];
+  var quill_voc = new Quill('#voc', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_phr = new Quill('#phr', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+
+  var raw_data = {{ contents }}
+  var word_id = "{{ word_id }}"
+
+  $(document).ready(function() {
+    var data = JSON.parse(raw_data)
+    quill_voc.setContents(data.voc.ops);
+    quill_phr.setContents(data.phr.ops);
+    var lexemes = data.lexemes
+  });
+
+  var buttonElem = document.getElementById('save');
+
+  buttonElem.addEventListener('click', function() {
+    var word = document.getElementById('word').value;
+    var author = document.getElementById('author').value;
+    var status = document.getElementById('status').value;
+    $.ajax({
+      type: 'POST',
+      data: JSON.stringify({
+        word_id: word_id,
+        word: word,
+        author: author,
+        status: status,
+        voc: quill_voc.getContents(),
+        phr: quill_phr.getContents(),
+        lex: []
+      }),
+      url: '/update',
+     })
+    alert('Изменения к слову "' + word + '" записаны')
+});
+</script>
+</body>
+</html>

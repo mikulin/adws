@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Активный Словарь РЯ</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='normalize.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='skeleton.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='quill.snow.css') }}" />
+  <script src="https://cdn.quilljs.com/1.2.5/quill.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="three columns left">
+      <hr>
+      <div class="title" id="title">
+        <h4>АКТИВНЫЙ СЛОВАРЬ<br>РУССКОГО ЯЗЫКА</h4>
+      </div>
+      <hr>
+      <div class="menu">
+        <a class="button" href="/">словник</a>
+        <a class="button" href="/new">новое слово</a>
+        <a class="button" href="/info">выйти</a>
+        <hr>
+        <a class="button button-primary" id="save" href="/edit?word_id={{ word_to_edit }}">сохранить лексему</a>
+      </div>
+    </div>
+    <div class="eight columns right">
+        <br>
+        <form id="info">
+          Слово:<br>
+          <input type="text" id="word" placeholder="лексема и номер" value="{{ word }}" readonly>
+          <br>
+          Номер значения:<br>
+          <input type="text" id="number" placeholder="например, 1.1" value="{{ number }}"  required>
+        </form>
+        <hr>
+        <b>ЛЕКСЕМА</b>
+        <p class="example"><b>акцент 3.1,</b> <u>лингв</u>.</p>
+        <div id="lex">
+          
+        </div>
+
+        <br><b>ПРИМЕРЫ</b>
+        <p class="example"><i>Великий <популярный> актер; знаменитый голливудский актер; «Дни Турбиных» в исполнении актеров МХАТа <Театра на Таганке>.</i></p>
+        <div id="exa">
+
+        </div>
+
+        <br><b>ЗНАЧЕНИЕ</b><br>
+        <p class="example">‘Человек, профессией которого является исполнение ролей в спектаклях или в фильмах’.</p>
+        <div id="def">
+          
+        </div>
+        <br><b>КОММЕНТАРИЙ</b>
+        <p class="example">Расширенные употребления в сочетании со словами, обозначающими способ выполнения действия: <u>эвф.</u> <i>активные методы допроса.</i></p>
+        <div id="com">
+          
+        </div>
+
+        <br><b>УПРАВЛЕНИЕ</b>
+        <p class="example">А1 • РОД: <i>акции сотрудников компании; акции государства</i>.<br>
+        • ПРИТЯЖ: <i>мои <ваши> акции</i>.<br>
+        А2 • <i>на сумму</i> ИМ: <i>акции на сумму пятьсот тысяч рублей</i>.<br>
+        А3 • РОД: <i>акции Газпрома</i>.<br>
+        • КАКАЯ: <i>газпромовская акция</i>.</p>
+        <div id="gov">
+          
+        </div>
+
+        <br><b>СОЧЕТАЕМОСТЬ</b><br>
+        <p class="example"><i>Трагический <драматический, комический> актер, оперный актер; профессиональный актер, актер-любитель, бродячие <странствующие> актеры.</i></p>
+        <div id="col">
+          
+        </div>
+
+        <br><b>КОНСТРУКЦИИ</b><br>
+        <p class="example">Может употребляться в конструкции с названием в роли приложения: <i>басня «Кот и повар»</i></p>
+        <div id="con">
+          
+        </div>
+
+        <br><b>ИЛЛЮСТРАЦИИ</b><br>
+        <p class="example"><i>Вертинскому было тесно в этих рамках, он отводил душу, когда пел на закрытых концертах для театральных актеров</i> (Л. Вертинская). <i>Это был театр одного актера, притом театр музыкальныи</i> (А. Висков).</p>
+        <div id="ill">
+          
+        </div>
+
+        <br><b>СЛУЖЕБНЫЕ ЗОНЫ</b><br>
+        <p class="example">СИН: <i>артист</i>; <u>устар.</u> <i>комедиант,</i> <u>устар.</u> <i>лицедей</i>; АНА: <i>исполнитель</i>; КОНВ: <i>роль</i>; ДЕР: <i>актерство</i>; актриса, <u>разг.-сниж.</u> <i>актерка</i>, <u>пренебр.</u> <i>актеришка</i>; <i>актерский</i>.</p>
+        <div id="sem">
+          
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var toolbarOptions = ['bold', 'italic', 'underline'];
+  var quill_lex = new Quill('#lex', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_exa = new Quill('#exa', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_def = new Quill('#def', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_com = new Quill('#com', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_gov = new Quill('#gov', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_col = new Quill('#col', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_con = new Quill('#con', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_ill = new Quill('#ill', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+  var quill_sem = new Quill('#sem', {
+    modules: {
+      toolbar: toolbarOptions
+    },
+    theme: 'snow'
+  });
+
+  var lex_id = "{{ lex_id }}";
+  var word_id_edit = "{{ word_to_edit }}";
+
+  $(document).ready(function() {
+    var raw_data = {{ contents }};
+    var data = raw_data;
+    quill_lex.setContents(data.lex.ops);
+    quill_exa.setContents(data.exa.ops);
+    quill_def.setContents(data.def.ops);
+    quill_com.setContents(data.com.ops);
+    quill_gov.setContents(data.gov.ops);
+    quill_col.setContents(data.col.ops);
+    quill_con.setContents(data.con.ops);
+    quill_ill.setContents(data.ill.ops);
+    quill_sem.setContents(data.sem.ops);
+  });
+
+  var buttonElem = document.getElementById('save');
+
+  buttonElem.addEventListener('click', function() {
+    var number = document.getElementById('number').value
+    var word = document.getElementById('word').value
+    $.ajax({
+      type: 'POST',
+      data: JSON.stringify({
+        word_to_edit: word_id_edit,
+        word_id: lex_id,
+        num: number,
+        lex_title: word + ' ' + number,
+        lex: quill_lex.getContents(),
+        exa: quill_exa.getContents(),
+        def: quill_def.getContents(),
+        com: quill_com.getContents(),
+        gov: quill_gov.getContents(),
+        col: quill_col.getContents(),
+        con: quill_con.getContents(),
+        ill: quill_ill.getContents(),
+        sem: quill_sem.getContents(),
+      }),
+      url: '/update_lex',
+     })
+    alert('Изменения к лексеме ' + {{ word }} + ' ' + {{ number }} + ' записаны')
+});
+</script>
+</body>
+</html>
